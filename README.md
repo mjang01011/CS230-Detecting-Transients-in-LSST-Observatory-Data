@@ -4,6 +4,7 @@ CS230 Deep Learning Project
 ## Models
 `models/` folder contains:
 - **RNN**: RNN for binary classification of light curve anomalies
+- **LSTM**: LSTM for binary classification of light curve anomalies
 - **TS2Vec**: Clone from https://github.com/zhihanyue/ts2vec.git
   ```bash
   cd models
