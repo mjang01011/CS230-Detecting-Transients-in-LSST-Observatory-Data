@@ -1,1 +1,24 @@
 venv/
+# Data files
+data/processed_training.csv
+data/raw/
+*.csv
+
+# Model checkpoints
+*.pth
+*.pt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
