@@ -1,0 +1,72 @@
+import torch
+from torch.utils.data import Dataset
+import pandas as pd
+import numpy as np
+
+class LightCurveDataset(Dataset):
+    def __init__(self, csv_path, max_length=200, use_flux_only=True):
+        """
+        Dataset for light curve data grouped by object_id
+
+        Args:
+            csv_path: path to processed CSV file
+            max_length: maximum sequence length (pad/truncate)
+            use_flux_only: if True, use only flux, else use flux + flux_err
+        """
+        df = pd.read_csv(csv_path)
+        self.max_length = max_length
+        self.use_flux_only = use_flux_only
+
+        unique_targets = sorted(df['target'].unique())
+        self.target_mapping = {old_label: new_label for new_label, old_label in enumerate(unique_targets)}
+        self.num_classes = len(unique_targets)
+
+        self.object_ids = df['object_id'].unique()
+        self.data = {}
+
+        for obj_id in self.object_ids:
+            obj_data = df[df['object_id'] == obj_id].sort_values('t_centered')
+            flux = obj_data['flux'].values
+            flux_err = obj_data['flux_err'].values
+            target = obj_data['target'].iloc[0]
+            target = self.target_mapping[target]
+
+            self.data[obj_id] = {
+                'flux': flux,
+                'flux_err': flux_err,
+                'target': target
+            }
+
+    def __len__(self):
+        return len(self.object_ids)
+
+    def __getitem__(self, idx):
+        obj_id = self.object_ids[idx]
+        obj_data = self.data[obj_id]
+
+        flux = obj_data['flux']
+        flux_err = obj_data['flux_err']
+        target = obj_data['target']
+
+        if self.use_flux_only:
+            sequence = flux
+        else:
+            sequence = np.stack([flux, flux_err], axis=1)
+
+        if len(sequence) > self.max_length:
+            sequence = sequence[:self.max_length]
+        elif len(sequence) < self.max_length:
+            if self.use_flux_only:
+                padding = np.zeros(self.max_length - len(sequence))
+                sequence = np.concatenate([sequence, padding])
+            else:
+                padding = np.zeros((self.max_length - len(sequence), 2))
+                sequence = np.concatenate([sequence, padding])
+
+        if self.use_flux_only:
+            sequence = sequence.reshape(-1, 1)
+
+        sequence = torch.tensor(sequence, dtype=torch.float32)
+        target = torch.tensor(target, dtype=torch.long)
+
+        return sequence, target
