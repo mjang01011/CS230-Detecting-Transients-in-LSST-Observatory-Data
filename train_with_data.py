@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
 import argparse
-from data.dataset import LightCurveDataset
+from lib.dataset import LightCurveDataset
 from models.rnn import LightCurveRNN
 from models.lstm import LightCurveLSTM
 
