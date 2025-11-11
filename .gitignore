@@ -1,6 +1,7 @@
 venv/
 # Data files
-data/processed_training.csv
+data/input/
+data/output/
 data/raw/
 *.csv
 
