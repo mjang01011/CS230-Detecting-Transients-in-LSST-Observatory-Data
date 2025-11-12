@@ -5,6 +5,7 @@ import argparse
 from lib.dataset import LightCurveDataset
 from models.rnn import LightCurveRNN
 from models.lstm import LightCurveLSTM
+from models.gru import LightCurveGRU
 
 def train(args):
     dataset = LightCurveDataset(
@@ -35,6 +36,8 @@ def train(args):
         model = LightCurveRNN(input_size=1, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
     elif args.model == 'lstm':
         model = LightCurveLSTM(input_size=1, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
+    elif args.model == 'gru':
+        model = LightCurveGRU(input_size=1, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
     else:
         raise ValueError(f"Unknown model: {args.model}")
 
@@ -92,9 +95,9 @@ def train(args):
         print(f"Model saved to {args.model}_model.pth")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Train RNN or LSTM on light curve data')
+    parser = argparse.ArgumentParser(description='Train RNN, LSTM, or GRU on light curve data')
     parser.add_argument('--data_path', type=str, default='data/processed_training.csv', help='Path to processed CSV')
-    parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm'], help='Model to use')
+    parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm', 'gru'], help='Model to use')
     parser.add_argument('--hidden_size', type=int, default=64, help='Hidden size')
     parser.add_argument('--num_layers', type=int, default=2, help='Number of layers')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
