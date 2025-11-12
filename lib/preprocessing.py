@@ -2,13 +2,6 @@ import numpy as np
 import pandas as pd
 from astropy.table import Table
 
-metafilename = './data/input/training_set_metadata.csv'
-metadata = Table.read(metafilename, format='csv')
-actualtrain_filename = './data/input/training_set.csv'
-actualtrain = Table.read(actualtrain_filename, format='csv')
-
-train_df = actualtrain.to_pandas()
-
 def drop_min_obs(train, min_obs=20):
     counts = train.groupby('object_id').size().rename('n_obs')
     keep_ids = counts[counts >= min_obs].index
@@ -24,7 +17,16 @@ def centralize_to_peak(train_df, peaks_df):
     shifted_df['t_centered'] = shifted_df['mjd'] - shifted_df['t_peak']
     return shifted_df
 
-def full_preprocess():
+def full_preprocess(args):
+    metafilename = f'data/input/{args.meta_filename}.csv'
+    metadata = Table.read(metafilename, format='csv')
+    actualtrain_filename = f'data/input/{args.raw_filename}.csv'
+    actualtrain = Table.read(actualtrain_filename, format='csv')
+
+    print("Reading from:", metafilename, actualtrain_filename)
+
+    train_df = actualtrain.to_pandas()
+
     print("Processing all data...")
     train_df_filtered = drop_min_obs(train_df, min_obs=70)
     print(f"After filtering: {train_df_filtered.shape}")
@@ -42,5 +44,6 @@ def full_preprocess():
     print(f"Number of unique objects: {final_df['object_id'].nunique()}")
     print(f"Columns: {list(final_df.columns)}")
 
-    final_df.to_csv('./data/output/processed_training.csv', index=False)
-    print("Saved to processed_training.csv")
+    output_path = f'data/output/{args.processed_filename}.csv'
+    final_df.to_csv(output_path, index=False)
+    print("Saved to:", output_path)

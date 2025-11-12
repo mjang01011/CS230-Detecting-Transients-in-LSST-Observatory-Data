@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime
 
 from lib.preprocessing import full_preprocess
 from train_with_data import train
@@ -7,19 +8,24 @@ from train_with_data import train
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train RNN or LSTM on light curve data')
     parser.add_argument("command", help="The command to run [preprocess | train].")
-    parser.add_argument('--data_path', type=str, default='data/processed_training.csv', help='Path to processed CSV')
+    parser.add_argument('--data_path', type=str, default='data/output/processed_training.csv', help='Path to processed CSV')
     parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm'], help='Model to use')
+    parser.add_argument('--identifier', type=str, default=f'{datetime.now().timestamp()}', help='Model identifier')
     parser.add_argument('--hidden_size', type=int, default=64, help='Hidden size')
     parser.add_argument('--num_layers', type=int, default=2, help='Number of layers')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--epochs', type=int, default=10, help='Number of epochs')
     parser.add_argument('--max_length', type=int, default=200, help='Max sequence length')
-    parser.add_argument('--save_model', action='store_true', help='Save model after training')
+    parser.add_argument('--save_model', type=bool, default=True, help='Save model after training')
+
+    parser.add_argument('--meta_filename', type=str, default='training_set_metadata')
+    parser.add_argument('--raw_filename', type=str, default='training_set')
+    parser.add_argument('--processed_filename', type=str, default='processed_training')
 
     args = parser.parse_args()
     if args.command == "preprocess":
-        full_preprocess()
+        full_preprocess(args)
     elif args.command == "train":
         train(args)
     else:
