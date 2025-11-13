@@ -3,8 +3,9 @@ CS230 Deep Learning Project
 
 ## Models
 `models/` folder contains:
-- **RNN**: RNN for binary classification of light curve anomalies
-- **LSTM**: LSTM for binary classification of light curve anomalies
+- **RNN**: RNN for classification of light curve anomalies
+- **LSTM**: LSTM for classification of light curve anomalies
+- **GRU**: GRU for classification of light curve anomalies
 - **TCN**: https://github.com/paul-krug/pytorch-tcn
 - **TS2Vec**: Clone from https://github.com/zhihanyue/ts2vec.git
   ```bash
@@ -13,6 +14,8 @@ CS230 Deep Learning Project
   ```
 
 ## Data
+Training and test data sourced from kaggle: https://www.kaggle.com/competitions/PLAsTiCC-2018/data.
+
 Create the following directory structure in your repository:
 ```
 root
@@ -21,7 +24,9 @@ root
     output/
 ```
 
-`input` stores kaggle inputs. `output` stores output csv and models.
+`input` stores kaggle inputs. `output` stores preprocessed data csvs.
+
+
 
 ### Preprocessing
 ```
