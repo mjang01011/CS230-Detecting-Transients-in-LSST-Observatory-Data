@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from lib.dataset import LightCurveDataset
 from models.rnn import LightCurveRNN
 from models.lstm import LightCurveLSTM
+import lib.metrics as metrics
 
 def test(args):
     dataset = LightCurveDataset(
@@ -54,3 +55,4 @@ def test(args):
     print(test_labels)
     print(pred_labels)
     
+    metrics.report(pred_labels, test_labels)
