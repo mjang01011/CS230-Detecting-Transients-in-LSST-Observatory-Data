@@ -36,3 +36,8 @@ python3 main.py preprocess --meta_filename=test_set_metadata --raw_filename=test
 ```
 python3 train_with_data.py --model=rnn
 ```
+
+## Testing
+```
+python3 main.py test --model=rnn --data_path=data/output/processed_test.csv
+```

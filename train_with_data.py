@@ -91,7 +91,7 @@ def train(args):
         print(f"Epoch [{epoch+1}/{args.epochs}] Train Loss: {train_loss:.4f} Train Acc: {train_acc:.2f}% Val Loss: {val_loss:.4f} Val Acc: {val_acc:.2f}%")
 
     if args.save_model:
-        torch.save(model.state_dict(), f"{args.model}_model.pth")
+        torch.save(model.state_dict(), f"{args.model}_model_{args.identifier}.pth")
         print(f"Model saved to {args.model}_model.pth")
 
 if __name__ == "__main__":

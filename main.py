@@ -3,6 +3,7 @@ from datetime import datetime
 
 from lib.preprocessing import full_preprocess
 from train_with_data import train
+from test import test
 
 
 if __name__ == "__main__":
@@ -19,6 +20,8 @@ if __name__ == "__main__":
     parser.add_argument('--max_length', type=int, default=200, help='Max sequence length')
     parser.add_argument('--save_model', type=bool, default=True, help='Save model after training')
 
+    parser.add_argument('--model_path', type=str, default='rnn_model_1762911982.909752.pth')
+
     parser.add_argument('--meta_filename', type=str, default='training_set_metadata')
     parser.add_argument('--raw_filename', type=str, default='training_set')
     parser.add_argument('--processed_filename', type=str, default='processed_training')
@@ -28,6 +31,8 @@ if __name__ == "__main__":
         full_preprocess(args)
     elif args.command == "train":
         train(args)
+    elif args.command == "test":
+        test(args)
     else:
         raise NotImplementedError("Command not found.")
     
