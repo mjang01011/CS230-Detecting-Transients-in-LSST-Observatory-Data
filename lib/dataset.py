@@ -54,7 +54,9 @@ class LightCurveDataset(Dataset):
             sequence = np.stack([flux, flux_err], axis=1)
 
         if len(sequence) > self.max_length:
-            sequence = sequence[:self.max_length]
+            # sequence = sequence[:self.max_length]
+            mid_idx = len(sequence) // 2
+            sequence = sequence[mid_idx - self.max_length // 2 : mid_idx + self.max_length // 2]
         elif len(sequence) < self.max_length:
             if self.use_flux_only:
                 padding = np.zeros(self.max_length - len(sequence))
