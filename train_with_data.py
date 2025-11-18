@@ -1,11 +1,13 @@
 import torch
 import torch.nn as nn
+from torchinfo import summary
 from torch.utils.data import DataLoader, random_split
 import argparse
 from lib.dataset import LightCurveDataset
 from models.rnn import LightCurveRNN
 from models.lstm import LightCurveLSTM
 from models.gru import LightCurveGRU
+from models.tcn import LightCurveTCN
 
 def train(args):
     dataset = LightCurveDataset(
@@ -38,12 +40,16 @@ def train(args):
         model = LightCurveLSTM(input_size=1, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
     elif args.model == 'gru':
         model = LightCurveGRU(input_size=1, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
+    elif args.model == 'tcn':
+        model = LightCurveTCN(input_size=1, num_classes=num_classes, max_length=args.max_length).to(device)
     else:
         raise ValueError(f"Unknown model: {args.model}")
 
     criterion = nn.CrossEntropyLoss()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+
+    summary(model, (args.batch_size, args.max_length, 1))
 
     for epoch in range(args.epochs):
         model.train()
@@ -53,7 +59,6 @@ def train(args):
 
         for batch_data, batch_labels in train_loader:
             batch_data, batch_labels = batch_data.to(device), batch_labels.to(device)
-
             optimizer.zero_grad()
             outputs = model(batch_data)
             loss = criterion(outputs, batch_labels)
@@ -97,7 +102,7 @@ def train(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train RNN, LSTM, or GRU on light curve data')
     parser.add_argument('--data_path', type=str, default='data/processed_training.csv', help='Path to processed CSV')
-    parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm', 'gru'], help='Model to use')
+    parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm', 'gru', 'tcn'], help='Model to use')
     parser.add_argument('--hidden_size', type=int, default=64, help='Hidden size')
     parser.add_argument('--num_layers', type=int, default=2, help='Number of layers')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')

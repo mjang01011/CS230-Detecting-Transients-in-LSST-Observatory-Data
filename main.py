@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train RNN or LSTM on light curve data')
     parser.add_argument("command", help="The command to run [preprocess | train].")
     parser.add_argument('--data_path', type=str, default='data/output/processed_training.csv', help='Path to processed CSV')
-    parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm'], help='Model to use')
+    parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm', 'gru', 'tcn'], help='Model to use')
     parser.add_argument('--identifier', type=str, default=f'{datetime.now().timestamp()}', help='Model identifier')
     parser.add_argument('--hidden_size', type=int, default=64, help='Hidden size')
     parser.add_argument('--num_layers', type=int, default=2, help='Number of layers')
