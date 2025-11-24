@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import sklearn.metrics as sklm
@@ -5,7 +7,10 @@ from torch.utils.data import DataLoader, random_split
 
 from lib.dataset import LightCurveDataset
 
-def report(predicted, actual, average='macro', zero_division=np.nan):
+def report(model, predicted, actual, average='macro', zero_division=np.nan):
+    output_folder = os.path.join("reports", model)
+    os.makedirs(output_folder, exist_ok=True)
+
     print(f"Generating report, average={average}, zero_division={zero_division}")
     accuracy = sklm.accuracy_score(actual, predicted)
     precision = sklm.precision_score(actual, predicted, average=average, zero_division=zero_division)
@@ -21,6 +26,11 @@ def report(predicted, actual, average='macro', zero_division=np.nan):
 
     print("\n### Comprehensive Classification Report ###")
     print(report)
+
+    # Confusion Matrix
+    cm = sklm.confusion_matrix(actual, predicted)
+    disp = sklm.ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=None)
+    disp.plot().figure_.savefig(os.path.join(output_folder, "confusion_matrix"))
 
 
 def check_class_distribution(

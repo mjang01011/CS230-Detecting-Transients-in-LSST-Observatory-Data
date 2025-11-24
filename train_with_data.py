@@ -4,6 +4,7 @@ from torchinfo import summary
 from torch.utils.data import DataLoader, random_split
 import argparse
 from lib.dataset import LightCurveDataset
+import lib.metrics as metrics
 from models.rnn import LightCurveRNN
 from models.lstm import LightCurveLSTM
 from models.gru import LightCurveGRU
@@ -76,6 +77,9 @@ def train(args):
         val_correct = 0
         val_total = 0
 
+        epoch_preds = []
+        epoch_labels = []
+
         with torch.no_grad():
             for batch_data, batch_labels in val_loader:
                 batch_data, batch_labels = batch_data.to(device), batch_labels.to(device)
@@ -88,12 +92,18 @@ def train(args):
                 val_correct += (predicted == batch_labels).sum().item()
                 val_total += batch_labels.size(0)
 
+                epoch_preds.extend(predicted)
+                epoch_labels.extend(batch_labels)
+
         train_loss /= len(train_loader)
         train_acc = 100 * train_correct / train_total
         val_loss /= len(val_loader)
         val_acc = 100 * val_correct / val_total
 
         print(f"Epoch [{epoch+1}/{args.epochs}] Train Loss: {train_loss:.4f} Train Acc: {train_acc:.2f}% Val Loss: {val_loss:.4f} Val Acc: {val_acc:.2f}%")
+        if epoch == args.epochs - 1:
+            # Compute final validation report.
+            metrics.report(args.model, epoch_preds, epoch_labels)
 
     if args.save_model:
         torch.save(model.state_dict(), f"{args.model}_model_{args.identifier}.pth")
