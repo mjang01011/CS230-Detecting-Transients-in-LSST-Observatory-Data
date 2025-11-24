@@ -4,6 +4,7 @@ from datetime import datetime
 from lib.preprocessing import full_preprocess
 from train_with_data import train
 from test import test
+import lib.metrics as metrics
 
 
 if __name__ == "__main__":
@@ -15,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument('--hidden_size', type=int, default=64, help='Hidden size')
     parser.add_argument('--num_layers', type=int, default=2, help='Number of layers')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
-    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
+    parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
     parser.add_argument('--epochs', type=int, default=10, help='Number of epochs')
     parser.add_argument('--max_length', type=int, default=200, help='Max sequence length')
     parser.add_argument('--save_model', type=bool, default=True, help='Save model after training')
@@ -33,6 +34,8 @@ if __name__ == "__main__":
         train(args)
     elif args.command == "test":
         test(args)
+    elif args.command == "input_analysis":
+        metrics.input_analysis(args)
     else:
         raise NotImplementedError("Command not found.")
     

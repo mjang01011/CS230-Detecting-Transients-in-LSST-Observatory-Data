@@ -9,6 +9,9 @@ data/raw/
 *.pth
 *.pt
 
+# Charts
+*.png
+
 # Python
 __pycache__/
 *.py[cod]
