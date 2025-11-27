@@ -15,12 +15,9 @@ class LightCurveRNN(nn.Module):
         super(LightCurveRNN, self).__init__()
         self.rnn = nn.RNN(input_size, hidden_size, num_layers, batch_first=True)
         self.fc = nn.Linear(hidden_size, num_classes)
-        self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, x):
-        out, hidden = self.rnn(x)
-        # out = out[:, -1, :]
-        out = hidden[-1]
+        out, _ = self.rnn(x)
+        out = out[:, -1, :]
         out = self.fc(out)
-        out = self.softmax(out)
         return out
