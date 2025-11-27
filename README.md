@@ -36,6 +36,9 @@ python3 main.py preprocess --meta_filename=training_set_metadata --raw_filename=
 # Pre-process subset training data
 python3 main.py preprocess --meta_filename=training_set_metadata --raw_filename=training_set --processed_filename=processed_training_42_65_90 --targets 42 65 90
 
+python3 main.py preprocess --meta_filename=training_set_metadata --raw_filename=training_set --processed_filename=processed_training_16_65 --targets 16 65
+
+
 # Pre-process test data
 python3 main.py preprocess --meta_filename=test_set_metadata --raw_filename=test_set_sample --processed_filename=processed_test
 ```
@@ -43,6 +46,10 @@ python3 main.py preprocess --meta_filename=test_set_metadata --raw_filename=test
 ## Training
 ```
 python3 train_with_data.py --model=rnn
+
+python3 main.py train --model=rnn --data_path=data/output/processed_training_42_65_90.csv
+python3 main.py train --model=rnn --data_path=data/output/processed_training_16_65.csv
+
 ```
 
 ## Testing
