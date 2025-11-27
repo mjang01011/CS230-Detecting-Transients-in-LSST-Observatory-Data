@@ -33,6 +33,9 @@ root
 # Pre-process training data
 python3 main.py preprocess --meta_filename=training_set_metadata --raw_filename=training_set --processed_filename=processed_training
 
+# Pre-process subset training data
+python3 main.py preprocess --meta_filename=training_set_metadata --raw_filename=training_set --processed_filename=processed_training_42_65_90 --targets 42 65 90
+
 # Pre-process test data
 python3 main.py preprocess --meta_filename=test_set_metadata --raw_filename=test_set_sample --processed_filename=processed_test
 ```

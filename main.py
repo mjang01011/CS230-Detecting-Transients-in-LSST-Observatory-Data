@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--meta_filename', type=str, default='training_set_metadata')
     parser.add_argument('--raw_filename', type=str, default='training_set')
     parser.add_argument('--processed_filename', type=str, default='processed_training')
+    parser.add_argument('--targets', type=int, nargs='*', default=[], help='Classes to keep')
 
     args = parser.parse_args()
     if args.command == "preprocess":

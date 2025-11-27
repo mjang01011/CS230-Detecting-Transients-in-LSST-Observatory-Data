@@ -20,7 +20,7 @@ class LightCurveDataset(Dataset):
         unique_targets = sorted(df['target'].unique())
         self.target_mapping = {old_label: new_label for new_label, old_label in enumerate(unique_targets)}
         self.num_classes = len(unique_targets)
-
+        print(self.target_mapping)
         self.object_ids = df['object_id'].unique()
         self.data = {}
 
