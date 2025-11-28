@@ -19,7 +19,7 @@ def train(args):
     if args.use_flux_only:
         input_size = 1
     else:
-        input_size = 3
+        input_size = 5
 
     train_size = int(0.8 * len(dataset))
     val_size = len(dataset) - train_size

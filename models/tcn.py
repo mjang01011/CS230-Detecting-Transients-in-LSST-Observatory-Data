@@ -14,8 +14,8 @@ class LightCurveTCN(nn.Module):
         """
         super(LightCurveTCN, self).__init__()
         # channels = [8, 16, 32, 64, 128, 256]
-        # channels = [64, 128]
-        channels = [8, 16, 32, 64]
+        channels = [64, 128, 256]
+        # channels = [8, 16, 32, 64]
         # channels = [16, 16, 16, 16, 16]
         # channels = [8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
         self.tcn = TCN(
@@ -33,7 +33,7 @@ class LightCurveTCN(nn.Module):
         # fc_input = input_size * channels[-1] * max_length
         # self.fc = nn.Linear(fc_input, num_classes)
         self.fc = nn.Linear(channels[-1], num_classes)
-        self.softmax = nn.LogSoftmax(dim=1)
+        # self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, x):
         out = self.tcn(x)
@@ -41,5 +41,5 @@ class LightCurveTCN(nn.Module):
         out = out[:, -1, :]
         # out = self.flatten(out)
         out = self.fc(out)
-        out = self.softmax(out)
+        # out = self.softmax(out)
         return out

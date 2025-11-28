@@ -28,8 +28,11 @@ class LightCurveDataset(Dataset):
         for obj_id in self.object_ids:
             obj_data = df[df['object_id'] == obj_id].sort_values('t_centered')
             t_centered = obj_data['t_centered'].values
+            passband = obj_data['passband'].values
             flux = obj_data['flux'].values
             flux_err = obj_data['flux_err'].values
+            detected = obj_data['detected'].values
+
             target = obj_data['target'].iloc[0]
             target = self.target_mapping[target]
 
@@ -37,6 +40,8 @@ class LightCurveDataset(Dataset):
                 't_centered': t_centered,
                 'flux': flux,
                 'flux_err': flux_err,
+                'passband': passband,
+                'detected': detected,
                 'target': target
             }
 
@@ -50,12 +55,14 @@ class LightCurveDataset(Dataset):
         t_centered = obj_data['t_centered']
         flux = obj_data['flux']
         flux_err = obj_data['flux_err']
+        passband = obj_data['passband']
+        detected = obj_data['detected']
         target = obj_data['target']
 
         if self.use_flux_only:
             sequence = flux
         else:
-            sequence = np.stack([t_centered, flux, flux_err], axis=1)
+            sequence = np.stack([t_centered, flux, flux_err, passband, detected], axis=1)
 
         if len(sequence) > self.max_length:
             # sequence = sequence[:self.max_length]
