@@ -52,6 +52,11 @@ python3 main.py train --model=rnn --data_path=data/output/processed_training_16_
 
 ```
 
+### Use more parameters
+```
+python3 main.py train --model=tcn --data_path=data/output/processed_training_16_65.csv --use_flux_only=False
+```
+
 ## Testing
 ```
 python3 main.py test --model=rnn --data_path=data/output/processed_test.csv

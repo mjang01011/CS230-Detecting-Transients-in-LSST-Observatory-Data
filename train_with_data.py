@@ -14,8 +14,12 @@ def train(args):
     dataset = LightCurveDataset(
         csv_path=args.data_path,
         max_length=args.max_length,
-        use_flux_only=True
+        use_flux_only=args.use_flux_only,
     )
+    if args.use_flux_only:
+        input_size = 1
+    else:
+        input_size = 3
 
     train_size = int(0.8 * len(dataset))
     val_size = len(dataset) - train_size
@@ -36,13 +40,13 @@ def train(args):
         print(f"GPU: {torch.cuda.get_device_name(0)}")
 
     if args.model == 'rnn':
-        model = LightCurveRNN(input_size=1, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
+        model = LightCurveRNN(input_size=input_size, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
     elif args.model == 'lstm':
-        model = LightCurveLSTM(input_size=1, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
+        model = LightCurveLSTM(input_size=input_size, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
     elif args.model == 'gru':
-        model = LightCurveGRU(input_size=1, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
+        model = LightCurveGRU(input_size=input_size, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
     elif args.model == 'tcn':
-        model = LightCurveTCN(input_size=1, num_classes=num_classes, max_length=args.max_length).to(device)
+        model = LightCurveTCN(input_size=input_size, num_classes=num_classes, max_length=args.max_length).to(device)
     else:
         raise ValueError(f"Unknown model: {args.model}")
 
@@ -103,7 +107,7 @@ def train(args):
         print(f"Epoch [{epoch+1}/{args.epochs}] Train Loss: {train_loss:.4f} Train Acc: {train_acc:.2f}% Val Loss: {val_loss:.4f} Val Acc: {val_acc:.2f}%")
         if epoch == args.epochs - 1:
             # Compute final validation report.
-            metrics.report(args.model, epoch_preds, epoch_labels)
+            metrics.report(args.model, epoch_preds, epoch_labels, dataset.ordered_labels)
 
     if args.save_model:
         torch.save(model.state_dict(), f"{args.model}_model_{args.identifier}.pth")

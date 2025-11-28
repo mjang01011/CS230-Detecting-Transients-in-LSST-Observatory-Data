@@ -55,4 +55,4 @@ def test(args):
     print(test_labels)
     print(pred_labels)
     
-    metrics.report(pred_labels, test_labels)
+    metrics.report(args.model, pred_labels, test_labels, dataset.ordered_labels)

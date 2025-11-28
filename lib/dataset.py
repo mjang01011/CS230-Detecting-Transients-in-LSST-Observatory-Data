@@ -11,7 +11,7 @@ class LightCurveDataset(Dataset):
         Args:
             csv_path: path to processed CSV file
             max_length: maximum sequence length (pad/truncate)
-            use_flux_only: if True, use only flux, else use flux + flux_err
+            use_flux_only: if True, use only flux, else use mjd, flux, flux_err
         """
         df = pd.read_csv(csv_path)
         self.max_length = max_length
@@ -19,6 +19,7 @@ class LightCurveDataset(Dataset):
 
         unique_targets = sorted(df['target'].unique())
         self.target_mapping = {old_label: new_label for new_label, old_label in enumerate(unique_targets)}
+        self.ordered_labels = [item[0] for item in sorted(self.target_mapping.items(), key=lambda item: item[1])]
         self.num_classes = len(unique_targets)
         print(self.target_mapping)
         self.object_ids = df['object_id'].unique()

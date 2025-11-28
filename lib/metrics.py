@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, random_split
 
 from lib.dataset import LightCurveDataset
 
-def report(model, predicted, actual, average='macro', zero_division=np.nan):
+def report(model, predicted, actual, labels, average='macro', zero_division=np.nan):
     output_folder = os.path.join("reports", model)
     os.makedirs(output_folder, exist_ok=True)
 
@@ -22,14 +22,14 @@ def report(model, predicted, actual, average='macro', zero_division=np.nan):
     print(f"Precision Score: {precision:.4f}")
     print(f"Recall Score: {recall:.4f}")
     print(f"F1-Score: {f1:.4f}")
-    report = sklm.classification_report(actual, predicted, zero_division=zero_division)
+    report = sklm.classification_report(actual, predicted, zero_division=zero_division, labels=labels)
 
     print("\n### Comprehensive Classification Report ###")
     print(report)
 
     # Confusion Matrix
     cm = sklm.confusion_matrix(actual, predicted)
-    disp = sklm.ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=None)
+    disp = sklm.ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
     disp.plot().figure_.savefig(os.path.join(output_folder, "confusion_matrix"))
 
 
