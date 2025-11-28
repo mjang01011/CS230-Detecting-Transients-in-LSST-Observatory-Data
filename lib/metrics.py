@@ -22,7 +22,10 @@ def report(model, predicted, actual, labels, average='macro', zero_division=np.n
     print(f"Precision Score: {precision:.4f}")
     print(f"Recall Score: {recall:.4f}")
     print(f"F1-Score: {f1:.4f}")
-    report = sklm.classification_report(actual, predicted, zero_division=zero_division, labels=labels)
+    report = sklm.classification_report(
+        actual, predicted, zero_division=zero_division,
+        target_names=[str(label) for label in labels]
+    )
 
     print("\n### Comprehensive Classification Report ###")
     print(report)
