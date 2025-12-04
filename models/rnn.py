@@ -17,7 +17,7 @@ class LightCurveRNN(nn.Module):
         self.fc = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x):
-        out, hidden = self.rnn(x)
+        out, _ = self.rnn(x)
         out = out[:, -1, :]
         out = self.fc(out)
         return out

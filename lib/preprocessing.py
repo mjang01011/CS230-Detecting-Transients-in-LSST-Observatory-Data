@@ -17,6 +17,14 @@ def centralize_to_peak(train_df, peaks_df):
     shifted_df['t_centered'] = shifted_df['mjd'] - shifted_df['t_peak']
     return shifted_df
 
+def filter_targets(train, targets=[]):
+    """
+    Filter train data for specific targets. Used for testing on a subset of data.
+    """
+    if not targets:
+        return train
+    return train[train['target'].isin(targets)].copy()
+
 def full_preprocess(args):
     metafilename = f'data/input/{args.meta_filename}.csv'
     metadata = Table.read(metafilename, format='csv')
@@ -28,6 +36,7 @@ def full_preprocess(args):
     train_df = actualtrain.to_pandas()
 
     print("Processing all data...")
+    print(f"Initial shape: {train_df.shape}")
     train_df_filtered = drop_min_obs(train_df, min_obs=70)
     print(f"After filtering: {train_df_filtered.shape}")
 
@@ -39,6 +48,9 @@ def full_preprocess(args):
 
     metadata_df = metadata.to_pandas()
     final_df = final_df.merge(metadata_df, on='object_id', how='left')
+    if args.targets:
+        final_df = filter_targets(final_df, targets=args.targets)
+        print(f"Selected for target classes: {args.targets}.")
 
     print(f"Final data shape: {final_df.shape}")
     print(f"Number of unique objects: {final_df['object_id'].nunique()}")
