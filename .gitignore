@@ -9,6 +9,9 @@ data/raw/
 *.pth
 *.pt
 
+# Results
+/reports/*
+
 # Charts
 *.png
 

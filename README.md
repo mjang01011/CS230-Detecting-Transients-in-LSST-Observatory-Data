@@ -33,7 +33,7 @@ root
 # Pre-process training data
 python3 main.py preprocess --meta_filename=training_set_metadata --raw_filename=training_set --processed_filename=processed_training
 
-# Pre-process subset training data
+# Pre-process subset training data (only select certain classes)
 python3 main.py preprocess --meta_filename=training_set_metadata --raw_filename=training_set --processed_filename=processed_training_42_65_90 --targets 42 65 90
 
 python3 main.py preprocess --meta_filename=training_set_metadata --raw_filename=training_set --processed_filename=processed_training_16_65 --targets 16 65
@@ -45,17 +45,19 @@ python3 main.py preprocess --meta_filename=test_set_metadata --raw_filename=test
 
 ## Training
 ```
-python3 train_with_data.py --model=rnn
+python3 main.py train --model=rnn --data_path=data/output/processed_test.csv
 
+# Some examples training using subset data
 python3 main.py train --model=rnn --data_path=data/output/processed_training_42_65_90.csv
 python3 main.py train --model=rnn --data_path=data/output/processed_training_16_65.csv
 
+
+# Training TCN with test using the fully post-processed data.
+python3 train_with_test.py
 ```
 
 ### Use more parameters
-```
-python3 main.py train --model=tcn --data_path=data/output/processed_training_16_65.csv --use_flux_only=False
-```
+Reference the .ipynb 
 
 ## Testing
 ```
