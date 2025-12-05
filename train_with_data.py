@@ -46,7 +46,7 @@ def train(args):
     elif args.model == 'gru':
         model = LightCurveGRU(input_size=input_size, hidden_size=args.hidden_size, num_layers=args.num_layers, num_classes=num_classes).to(device)
     elif args.model == 'tcn':
-        model = LightCurveTCN(input_size=input_size, num_classes=num_classes, max_length=args.max_length).to(device)
+        model = LightCurveTCN(input_size=input_size, num_classes=num_classes, hidden_size=args.hidden_size, num_layers=args.num_layers, kernel_size=args.kernel_size).to(device)
     else:
         raise ValueError(f"Unknown model: {args.model}")
 
@@ -56,6 +56,8 @@ def train(args):
 
     summary(model, (args.batch_size, args.max_length, 1))
 
+    all_loss = []
+    all_error = []
     for epoch in range(args.epochs):
         model.train()
         train_loss = 0.0
@@ -103,15 +105,24 @@ def train(args):
         train_acc = 100 * train_correct / train_total
         val_loss /= len(val_loader)
         val_acc = 100 * val_correct / val_total
-
+        
+        all_loss.append((train_loss, val_loss))
+        all_error.append((train_acc, val_acc))
         print(f"Epoch [{epoch+1}/{args.epochs}] Train Loss: {train_loss:.4f} Train Acc: {train_acc:.2f}% Val Loss: {val_loss:.4f} Val Acc: {val_acc:.2f}%")
         if epoch == args.epochs - 1:
             # Compute final validation report.
-            metrics.report(args.model, epoch_preds, epoch_labels, dataset.ordered_labels)
+            metrics.report(
+                args.model, epoch_preds, epoch_labels,
+                dataset.ordered_labels,
+                all_loss,
+                all_error,
+                args.epochs,
+                tag=args.tag
+            )
 
     if args.save_model:
         torch.save(model.state_dict(), f"{args.model}_model_{args.identifier}.pth")
-        print(f"Model saved to {args.model}_model.pth")
+        print(f"Model saved to {args.model}_model_{args.identifier}.pth")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train RNN, LSTM, or GRU on light curve data')

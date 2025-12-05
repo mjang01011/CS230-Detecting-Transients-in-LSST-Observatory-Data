@@ -21,6 +21,8 @@ if __name__ == "__main__":
     parser.add_argument('--max_length', type=int, default=200, help='Max sequence length')
     parser.add_argument('--save_model', type=bool, default=True, help='Save model after training')
     parser.add_argument('--use_flux_only', type=bool, default=True, help='Only use flux as training parameter')
+    parser.add_argument('--tag', type=str, default='', help='Label to separate models')
+    parser.add_argument('--kernel_size', type=int, default=3, help='Number of epochs')
 
     parser.add_argument('--model_path', type=str, default='rnn_model_1762911982.909752.pth')
 

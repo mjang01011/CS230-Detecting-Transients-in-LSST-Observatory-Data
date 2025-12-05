@@ -1,14 +1,20 @@
 import os
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 import sklearn.metrics as sklm
-from torch.utils.data import DataLoader, random_split
 
 from lib.dataset import LightCurveDataset
 
-def report(model, predicted, actual, labels, average='macro', zero_division=np.nan):
+def report(model, predicted, actual, labels, 
+           all_loss, all_error, num_epochs,
+           average='macro', zero_division=np.nan, tag=""):
+    print("all_loss:", all_loss)
+    print("all_error:", all_error)
     output_folder = os.path.join("reports", model)
+    if tag:
+        output_folder = os.path.join(output_folder, tag)
     os.makedirs(output_folder, exist_ok=True)
 
     print(f"Generating report, average={average}, zero_division={zero_division}")
@@ -33,7 +39,35 @@ def report(model, predicted, actual, labels, average='macro', zero_division=np.n
     # Confusion Matrix
     cm = sklm.confusion_matrix(actual, predicted)
     disp = sklm.ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
-    disp.plot().figure_.savefig(os.path.join(output_folder, "confusion_matrix"))
+    disp.plot(cmap=plt.cm.Blues).figure_.savefig(os.path.join(output_folder, "confusion_matrix"))
+
+    # Loss and error curves
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    tick_positions = np.arange(1, num_epochs + 1)
+    # Subplot 1: Loss Curve
+    train_loss, val_loss = zip(*all_loss)
+    axes[0].plot(tick_positions, train_loss, label='Training Loss', color='blue')
+    axes[0].plot(tick_positions, val_loss, label='Validation Loss', color='orange')
+    axes[0].set_title('Loss Curve Over Epochs', fontsize=16)
+    axes[0].set_xlabel('Epoch', fontsize=14)
+    axes[0].set_ylabel('Loss', fontsize=14)
+    axes[0].legend(fontsize=12)
+    axes[0].grid(True, linestyle='--', alpha=0.6)
+    axes[0].xaxis.set_major_locator(MaxNLocator(integer=True))
+
+    # Subplot 2: Accuracy Curve
+    train_acc, val_acc = zip(*all_error)
+    axes[1].plot(tick_positions, train_acc, label='Training Accuracy', color='blue')
+    axes[1].plot(tick_positions, val_acc, label='Validation Accuracy', color='orange')
+    axes[1].set_title('Accuracy Curve Over Epochs', fontsize=16)
+    axes[1].set_xlabel('Epoch', fontsize=14)
+    axes[1].set_ylabel('Accuracy', fontsize=14)
+    axes[1].legend(fontsize=12)
+    axes[1].grid(True, linestyle='--', alpha=0.6)
+    axes[1].xaxis.set_major_locator(MaxNLocator(integer=True))
+    plt.tight_layout()
+
+    plt.savefig(os.path.join(output_folder, "training_curves"))
 
 
 def check_class_distribution(
